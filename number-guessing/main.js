@@ -8,6 +8,7 @@
 // 7. 5번의 기회가 다쓰면 게임이 끝난다. (더 이상 추측 불가능 = 버튼 disable)
 // 8. 유저가 1 ~ 100 범위 밖에 숫자를 입력하면 알려준다. 기회를 깍지 않는다.
 // 9. 유저가 이미 입력한 숫자를 또 입력하면, 알려준다, 기회를 깍지 않는다. -> 과거 유저 입력 정보를 알아야한다.
+// 10. 맞춰도 버튼 비활성화
 
 let computerNum = 0;
 let playButton = document.getElementById("play-button") // documnet = 웹사이트 자체 -> 에서 id로 html 태그를 선택 // html 요소를 가지고 오기
@@ -63,6 +64,7 @@ function play(){
     } else {
         // console.log("맞췄습니다!")
         resultArea.textContent = "맞췄습니다"
+        gameOver= true
     }
 
     history.push(userValue) // 저장
