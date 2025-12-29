@@ -13,7 +13,46 @@
 let taskInput = document.getElementById("task-input");
 let addButton = document.getElementById("add-button");
 let taskList = []
+let tabs = document.querySelectorAll(".task-tabs div") // 조건에 만족하는 모든것을 가지고오기
+let mode = "all"
+let filterList = []
+let doneList = []
+
 addButton.addEventListener("click", addTask) // click 이벤트, 함수
+
+for(let i = 1; i < tabs.length; i++){
+    tabs[i].addEventListener("click", function(event){
+        filter(event)
+    })
+}
+
+// ctrl + d = 동시 선택 단축키 
+// tabs[i].addEventListener("click", function(event)) -> event 전달
+function filter(event){
+    mode = event.target.id
+    if(mode === "all"){
+        // 전체 리스트 
+        render()
+    } else if(mode === "ongoing"){
+        // 진행중인 아이템을 보여주기 = task.isComplete = false
+        for(let i = 0; i < taskList.length; i++){
+            if(taskList[i].isComplete === false){
+                // 1. 진행중인것만 모아놓는 리스트 필요
+                filterList.push(taskList[i])
+            }
+        }
+        render() // 값 변화 -> UI 변화
+    } else if (mode === "done"){
+        // 끝나는 케이스 = task.isComplete = true
+        for(let i = 0; i < taskList.length; i++){
+            if(taskList[i].isComplete === true){
+                // 1. 진행중인것만 모아놓는 리스트 필요
+                doneList.push(taskList[i])
+            }
+        }
+        render() 
+    }
+}
 
 function addTask(){
     // let taskContent = taskInput.value
@@ -33,23 +72,36 @@ function addTask(){
 }
 
 function render(){
+    // 1. 내가 선택한 탭에 따라서 리스트를 다르게 보여주기 -> 선택한 탭을 전달 // 
+    let list = [] 
+    if(mode === "all"){
+        // taskList
+        list = taskList;
+    } else if (mode === "ongoing"){
+        // filterList
+        list = filterList;
+    } else if (mode == "done"){
+        list = doneList;
+    }
+    
+    
     let resultHTML = ''
-    for(let i = 0; i < taskList.length; i++){
-        if(taskList[i].isComplete == true){
+    for(let i = 0; i < list.length; i++){
+        if(list[i].isComplete == true){
             // "task-done" css 속성 추가 
             resultHTML += `<div class ="task">
-                    <div class = "task-done">${taskList[i].taskContent}</div>
+                    <div class = "task-done">${list[i].taskContent}</div>
                     <div>
-                        <button onclick="toggleComplete('${taskList[i].id}')">Check</button>
-                        <button onclick="deleteTask('${taskList[i].id}')">Delete</button>
+                        <button onclick="toggleComplete('${list[i].id}')">Check</button>
+                        <button onclick="deleteTask('${list[i].id}')">Delete</button>
                     </div>
                 </div>`
         } else {
             resultHTML += `<div class ="task">
-                        <div>${taskList[i].taskContent}</div>
+                        <div>${list[i].taskContent}</div>
                         <div>
-                            <button onclick="toggleComplete('${taskList[i].id}')">Check</button>
-                            <button onclick="deleteTask('${taskList[i].id}')">Delete</button>
+                            <button onclick="toggleComplete('${list[i].id}')">Check</button>
+                            <button onclick="deleteTask('${list[i].id}')">Delete</button>
                         </div>
                     </div>`
         }
@@ -85,7 +137,7 @@ function deleteTask(id){
             break
         }
     }
-    render(); // togglerComplete 끝나면 -> render 불러주기!! (다시 UI 값을 그리기)
+    render(); // 값 업데이트 -> UI 업데이트!! // 이걸 대신 해주는게 REACT
 }
 
 
@@ -95,25 +147,5 @@ function deleteTask(id){
 // 1. addButton.addEventListener("click", addTask) // click 이벤트, 함수
 // 2. onclick -> 바로 버튼 tag에 클릭 이벤트를 주는 방식
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// how to change cursor on div tag css 
 // 부트스트랩 사용법: 한 번 더 공부
