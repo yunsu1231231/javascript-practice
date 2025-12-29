@@ -18,6 +18,9 @@ let taskList = []
 let filterList = []
 let doneList = []
 
+let beforeFilerList = filterList
+let beforeDoneList = doneList
+
 addButton.addEventListener("click", addTask) // click 이벤트, 함수
 
 for(let i = 1; i < tabs.length; i++){
@@ -41,7 +44,10 @@ function filter(event){
                 filterList.push(taskList[i])
             }
         }
-        render() // 값 변화 -> UI 변화
+        if(beforeFilerList != filterList){
+            render() // 값 변화 -> UI 변화
+            beforeFilerList = filterList
+        }
     } else if (mode === "done"){
         // 끝나는 케이스 = task.isComplete = true
         for(let i = 0; i < taskList.length; i++){
@@ -50,7 +56,10 @@ function filter(event){
                 doneList.push(taskList[i])
             }
         }
-        render() 
+        if(beforeDoneList != filterList){
+            render() // 값 변화 -> UI 변화
+            beforeDoneList = filterList
+        }
     }
 }
 
@@ -160,3 +169,5 @@ function deleteTask(id){
 
 // how to change cursor on div tag css 
 // 부트스트랩 사용법: 한 번 더 공부
+
+// 진행중, 끝남 -> 반복해서 누르면 -> 반복해서 생성되는 것 
