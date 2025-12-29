@@ -18,8 +18,6 @@ let taskList = []
 let filterList = []
 let doneList = []
 
-let beforeFilerList = filterList
-let beforeDoneList = doneList
 
 addButton.addEventListener("click", addTask) // click 이벤트, 함수
 
@@ -37,6 +35,7 @@ function filter(event){
         // 전체 리스트 
         render()
     } else if(mode === "ongoing"){
+        filterList = []
         // 진행중인 아이템을 보여주기 = task.isComplete = false
         for(let i = 0; i < taskList.length; i++){
             if(taskList[i].isComplete === false){
@@ -44,21 +43,14 @@ function filter(event){
                 filterList.push(taskList[i])
             }
         }
-        if(beforeFilerList != filterList){
-            render() // 값 변화 -> UI 변화
-            beforeFilerList = filterList
-        }
     } else if (mode === "done"){
+        doneList = []
         // 끝나는 케이스 = task.isComplete = true
         for(let i = 0; i < taskList.length; i++){
             if(taskList[i].isComplete === true){
                 // 1. 진행중인것만 모아놓는 리스트 필요
                 doneList.push(taskList[i])
             }
-        }
-        if(beforeDoneList != filterList){
-            render() // 값 변화 -> UI 변화
-            beforeDoneList = filterList
         }
     }
 }
@@ -68,9 +60,13 @@ function addTask(){
     // task 객체 
     let task = {
         id: randomIDGenerate(),
-        taskContent: taskInput.value,
+        taskContent: taskInput.value, // 이미 저장되어 있는 input 객체의 속성을 읽는 것
         isComplete:false
     } 
+
+    if(task.taskContent === ""){
+        return
+    }
 
     taskList.push(task)
     console.log(task);
@@ -171,3 +167,8 @@ function deleteTask(id){
 // 부트스트랩 사용법: 한 번 더 공부
 
 // 진행중, 끝남 -> 반복해서 누르면 -> 반복해서 생성되는 것 
+
+// 이벤트 핸들러 함수는 인자를 안 받아도
+// DOM 요소(태그)에 접근할 수 있다.
+// 이유는 이벤트 때문이 아니라
+// 스코프와 DOM 참조 때문
