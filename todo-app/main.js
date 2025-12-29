@@ -12,9 +12,9 @@
 
 let taskInput = document.getElementById("task-input");
 let addButton = document.getElementById("add-button");
-let taskList = []
 let tabs = document.querySelectorAll(".task-tabs div") // 조건에 만족하는 모든것을 가지고오기
 let mode = "all"
+let taskList = []
 let filterList = []
 let doneList = []
 
@@ -131,9 +131,20 @@ function randomIDGenerate(){
 }
 
 function deleteTask(id){
-    for(let i = 0; i < taskList.length; i++){
-        if(taskList[i].id == id){
-            taskList.splice(i, 1);
+    let list = [] 
+    if(mode === "all"){
+        // taskList
+        list = taskList;
+    } else if (mode === "ongoing"){
+        // filterList
+        list = filterList;
+    } else if (mode == "done"){
+        list = doneList;
+    }
+
+    for(let i = 0; i < list.length; i++){
+        if(list[i].id == id){
+            list.splice(i, 1);
             break
         }
     }
