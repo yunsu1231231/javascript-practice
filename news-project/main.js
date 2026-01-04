@@ -1,4 +1,4 @@
-const API_KEY = ``;
+const API_KEY = `d760d8ccba0b48f2a0079d9f94ce1f17`;
 
 let newsList = []
 const menus = document.querySelectorAll(".menus button") // 1. 버튼 들고오기 
@@ -15,6 +15,16 @@ const getLatestNews = async () => {
     console.log("요기", data); // 이후 1. 데이터 저장 2. 보여주기 
     console.log("newsList", newsList)
 }
+
+const getNewsByKeyword = async() => {
+    const keyword = document.getElementById("search-input").value // input value 가지고 오기
+    const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`)
+
+    const response = await fetch(url)
+    const data = await response.json()
+    newsList = data.articles // newsList에 담아주기
+    render()
+} 
 
 // 버튼에 클릭 이벤트를 달아 두고, 클릭되면 그 버튼의 textContent를 카테고리로 사용해 API 요청을 보내고 해당 뉴스 데이터를 받아오기
 // textContent는 HTML 요소가 가진 속성이고, 자바스크립트로 그 DOM 요소를 가져와서 그 값을 읽은 것!
