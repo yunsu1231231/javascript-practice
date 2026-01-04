@@ -5,9 +5,16 @@ const menus = document.querySelectorAll(".menus button") // 1. 버튼 들고오�
 menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByCategory(event))) // 2. menus 배열에 click 이벤트 주기,, 복기
 
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
+let totalResults = 0
+let page = 1 // 현재 page
+const pageSize = 10
+const groupSize = 5
 
+// 실제 API 호출
 const getNews = async() => {
     try {
+        url.searchParams.set("page", page) // 쿼리 뒤에 값 셋팅 // page 파리미터의 page 값 셋팅 &page = page
+        url.searchParams.set("pageSize", pageSize)
         const response = await fetch(url)
         const data = await response.json()
         if(response.status === 200){
@@ -15,7 +22,9 @@ const getNews = async() => {
                 throw new Error("No result for this search"); // Edge 케이스, 응답을 받지만 0일 때 
             }
             newsList = data.articles
+            totalResults = data.totalResults
             render()
+            pageNationRender() 
         } else {
             throw new Error(data.message)
         }
@@ -78,6 +87,56 @@ const render = () => {
     document.getElementById("news-board").innerHTML = newsHTML // id: news-board에 붙인다
 }
 
+const pageNationRender = () => {
+    // totalResult
+    // page
+    // pageSize
+    // groupSize    
+    // totalPages
+    const totalPages = Math.ceil(totalResults / pageSize)
+    // pageGroup
+    const pageGroup = Math.ceil(page / groupSize)
+    // lastPage
+    let lastPage = pageGroup * groupSize
+    // 마지막 페이지 그룹이 그룹 사이즈보다 작다? => lastPage = totalPage
+    if(lastPage > totalPages){
+        lastPage = totalPages 
+    }
+    // firstPage
+    const firstPage = 
+        lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1) // 0보다 작아도 무조건 1부터
+    // first ~ last 그리기
+
+    let paginationHTML = `<li class="page-item" onclick ="moveToPage(${page - 1})"><a class="page-link" href="#">Previous</a></li>`
+
+    for(let i = firstPage; i <= lastPage; i++){
+        paginationHTML += `<li class="page-item" onclick = "moveToPage(${i})"><a class="page-link">${i}</a></li>`
+    }
+
+    paginationHTML += `<li class="page-item" onclick ="moveToPage(${page + 1})"><a class="page-link" href="#">Next</a></li>`
+
+
+
+    document.querySelector(".pagination").innerHTML = paginationHTML
+
+    // `<nav aria-label="Page navigation example">
+    // <ul class="pagination">
+    //     <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+    //     <li class="page-item"><a class="page-link" href="#">1</a></li>
+    //     <li class="page-item"><a class="page-link" href="#">2</a></li>
+    //     <li class="page-item"><a class="page-link" href="#">3</a></li>
+    //     <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    // </ul>
+    // </nav>`
+}
+
+// pageNumber = 동적으로 몇 번째 페이지인데 받기
+const moveToPage = (pageNumber) => {
+    page = pageNumber
+    getNews() // 다시 뉴스 API를 호출
+}
+
+
 getLatestNews()
 
 // 1. 서버는 JSON “형식의 문자열(text)”을 보내고,
@@ -115,3 +174,7 @@ getLatestNews()
 // Error
 // 1. status 번호로 1차 확인가능
 // 2. Error codes로 조금 더 디테일 내용 판단 가능 
+
+// 부트스트랩 복습
+// 1. HTML 36번 라인
+// 2. pageNationRender() 
