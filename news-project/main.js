@@ -7,10 +7,21 @@ menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByCategor
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
 
 const getNews = async() => {
-    const response = await fetch(url)
-    const data = await response.json() 
-    newsList = data.articles
-    render()
+    try {
+        const response = await fetch(url)
+        const data = await response.json()
+        if(response.status === 200){
+            if(data.articles.length === 0){
+                throw new Error("No result for this search"); // Edge 케이스, 응답을 받지만 0일 때 
+            }
+            newsList = data.articles
+            render()
+        } else {
+            throw new Error(data.message)
+        }
+    } catch (error){
+        errorRender(error.message)
+    }
 }
 
 const getLatestNews = async () => {
@@ -35,6 +46,15 @@ const getNewsByCategory = async (event) => {
     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`)
     const response = await fetch(url)
     getNews() 
+}
+
+// 에러 메세지 보여주는 함수
+const errorRender = (errorMessage) => {
+    const errorHTML = `<div class="alert alert-danger" role="alert">
+    ${errorMessage}
+    </div>`
+
+    document.getElementById("news-board").innerHTML = errorHTML // news-board section에 보여주는 것 
 }
 
 // 뉴스 그려주는 함수
@@ -91,3 +111,7 @@ getLatestNews()
 
 // 리팩토링
 // 1. 반복되는 코드 따로 빼놓기
+
+// Error
+// 1. status 번호로 1차 확인가능
+// 2. Error codes로 조금 더 디테일 내용 판단 가능 
